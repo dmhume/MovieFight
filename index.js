@@ -1,20 +1,23 @@
-const fetchData = async searchTerm => {
-  const response = await axios.get("http://www.omdbapi.com/", {
-    params: {
-      apikey: "85ab84d7",
-      s: searchTerm
-    }
-  });
+const durationInput = document.querySelector("#duration");
+const startButton = document.querySelector("#start");
+const pauseButton = document.querySelector("#pause");
+const circle = document.querySelector("circle");
 
-  console.log(response.data);
-};
+const perimeter = circle.getAttribute("r") * 2 * Math.PI;
+circle.setAttribute("stroke-dasharray", perimeter);
 
-const input = document.querySelector("input");
-
-let timeoutId;
-const onInput = event => {
-  fetchData(event.target.value);
-};
-input.addEventListener("input", onInput);
-
-fetchData();
+let duration;
+const timer = new Timer(durationInput, startButton, pauseButton, {
+  onStart(totalDuration) {
+    duration = totalDuration;
+  },
+  onTick(timeRemaining) {
+    circle.setAttribute(
+      "stroke-dashoffset",
+      (perimeter * timeRemaining) / duration - perimeter
+    );
+  },
+  onComplete() {
+    console.log("Timer is completed");
+  }
+});
